@@ -1,0 +1,305 @@
+# Chama as funções do Sistema
+import os
+
+# Chama as funções de Tempo
+import time
+
+# Chama as funcoes aleatórias
+import random
+
+# Chama as posicôes para a variavel tabuleiro
+def tabuleiro():
+    num = 1
+
+    for i in range(3):
+        for j in range(3):
+            if num in tentativas and j < 2:
+                print(' ', end=' | ')
+            
+            elif j < 2:
+                print(num, end=' | ')
+
+            else:
+                print(num, end='   ')
+
+            num += 1
+        
+        if i < 2:
+            print('\n' + '_'*10)
+    
+    print('\n')
+
+
+# Realiza a jogada na posicao escolhida
+def realizar_jogada(tabuleiro_, posicao):
+    global i
+    numero = 1
+
+    for lin in range(3):
+        for col in range(3):
+            if numero == posicao and tabuleiro_[lin][col] == ' ':
+                if i % 2 == 0:
+                    tabuleiro_[lin][col] = 'X'
+                
+                else:
+                    tabuleiro_[lin][col] = 'O'
+                
+            if posicao != numero or posicao in tentativas:
+                print(tabuleiro_[lin][col], end='  ')
+            
+            else:
+                print(numero, end='  ')
+
+            numero += 1        
+        print('\n')
+
+
+# Chama o tabuleiro que mostra as posições já jogadas
+def tabuleiro_jogavel(tabuleiro_):
+    for lin in range(3):
+        for col in range(3):
+            if col < 2:
+                print(tabuleiro_[lin][col], end=' | ')
+
+            else:
+                print(tabuleiro_[lin][col], end=' ')
+
+        if lin < 2:
+            print('\n' + '_'*10)
+
+
+# Testa qual jogador ganhou e em quais posições
+def testar_ganhador(tabuleiro_):
+    global posicao_vencida
+
+    for i in range(3):
+        if tabuleiro_[i][0] == tabuleiro_[i][1] == tabuleiro_[i][2] != ' ':
+            posicao_vencida = f'Venceu na {i + 1}º Linha'
+            return tabuleiro_[i][0]
+
+        if tabuleiro_[0][i] == tabuleiro_[1][i] == tabuleiro_[2][i] != ' ':
+            posicao_vencida = f'Venceu na {i + 1}º Coluna'
+            return tabuleiro_[0][i] 
+
+    if tabuleiro_[0][0] == tabuleiro_[1][1] == tabuleiro_[2][2] != ' ':
+        posicao_vencida = f'Venceu na Diagonal Principal'
+        return tabuleiro_[0][0] 
+
+    if tabuleiro_[0][2] == tabuleiro_[1][1] == tabuleiro_[2][0] != ' ':
+        posicao_vencida = f'Venceu na Diagonal Secundaria'
+        return tabuleiro_[0][2] 
+
+    return None 
+
+
+# Limpa o tabuleiro para jogar novamente
+def limpar_tabuleiro(tabuleiro_):
+    for lin in range(3):
+        for col in range(3):
+            tabuleiro_[lin][col] = '  '
+
+
+# Programa principal
+while True:
+    # Pede as informações para os jogadores
+    # Ou da a opacao de jogar sozinho caso nâo coloque o jogador 2
+    sozinho = ''
+    jogador1 = input('Jogador 1: ')
+    jogador2 = input('Jogador 2: ')
+
+    if not jogador2:
+        sozinho = input('Voce deseja jogar sozinho? [s|n]: ')
+
+        if sozinho == 's':
+            print('Esta jogando sozinho')
+            jogador2 = 'PC'
+
+        else:
+            os.system('cls')
+            continue
+
+    if jogador1 == jogador2 or not jogador1:
+        print('Coloque nomes diferentes!')
+        time.sleep(2)
+        os.system('cls')
+        continue
+
+    break
+
+tentativas = []
+
+pontuacao_jogador1 = 0
+
+pontuacao_jogador2 = 0
+
+rodadas = 1
+
+velha = 0
+
+os.system('cls')
+
+partida = int(input('Quantas partidas para ter um vencedor: '))
+time.sleep(0.5)
+
+print(f'Está jogando uma melhor de {partida}') 
+
+print('Os números abaixo indicam a posição no tabuleiro')
+time.sleep(2.5)
+
+while True:
+    # Inicializar tabuleiro vazio
+    tabuleiro_ = [[' ' for _ in range(3)] for _ in range(3)]
+    
+    i = 0
+
+    posicao_vencida = f''
+
+    while True:
+        os.system('cls')
+
+        # Chama o placar
+        print(f'PLACAR: |{jogador1} = {pontuacao_jogador1} \tVS\t {jogador2} = {pontuacao_jogador2}')
+        print(f'        |{rodadas}º Rodada  \t--\t Velha = {velha}')
+        
+        # Chama o tabuleiro auxiliar que mostra as posições
+        print('Tabuleiro auxiliar:')
+        tabuleiro()
+        
+        # Chama o tabuleiro onde será jogado
+        print('Tabuleiro:')
+        tabuleiro_jogavel(tabuleiro_)
+
+        print('\n')
+        
+        # Escolhe qual jogador X ou O e confere se foi digitado um numero
+        # Esse if será para o jogador X
+        if i % 2 == 0:
+            print(f'Vez do {jogador1} - X')
+            posicao1 = input('Posição: ')
+            
+            if not posicao1.isdigit():
+                print('Digite somente números')
+                time.sleep(1.5)
+                continue
+            
+            posicao = int(posicao1)
+
+        # Confere se o usuário quer jogar sozinho
+        # Caso sim voce jogara contra a funcão random
+        elif sozinho == 's':
+            while posicao in tentativas:
+                posicao = random.randint(1, 9)
+
+        # Esse else faz a encolha para o jogador O
+        else:
+            print(f'Vez do {jogador2} - O')
+            posicao1 = input('Posição: ')
+
+            if not posicao1.isdigit():
+                time.sleep(1.5)
+                continue
+
+            posicao = int(posicao1)
+
+
+        # Testa se o número faz parte da escolha
+        # Se fizer ele confere se a posição não foi escolhida
+        if posicao in tentativas or not 1 <= posicao <= 9:
+            print('Posição inválida. Escolha outra posição.')
+            time.sleep(2)
+            continue
+        
+        tentativas.append(posicao)
+        
+        realizar_jogada(tabuleiro_, posicao)
+        
+        i += 1
+
+        # Testa o ganhador da partida jogada
+        if testar_ganhador(tabuleiro_):
+            os.system('cls')
+            tabuleiro_jogavel(tabuleiro_)
+            time.sleep(1)
+            print('\n')
+            
+            if i % 2 == 0:
+                print(f'{jogador2} {posicao_vencida}!')
+                time.sleep(1)
+                print(f'{jogador2} ganhou um ponto!')
+                pontuacao_jogador2 += 1
+                break
+            
+            elif i % 2 != 0:
+                print(f'{jogador1} {posicao_vencida}!')
+                time.sleep(1)
+                print(f'{jogador1} ganhou um ponto!')
+                pontuacao_jogador1 += 1
+                break
+        
+        # Testa se deu Velha
+        if len(tentativas) == 9:
+            os.system('cls')
+            tabuleiro_jogavel(tabuleiro_)
+            print('\n')
+            print('Velha!')
+            velha += 1
+            break
+
+    limpar_tabuleiro(tabuleiro_)
+
+    if pontuacao_jogador1 == pontuacao_jogador2 == partida - 1:
+        print('Quem vencer a próxima ganha!')
+
+    time.sleep(1.5)
+
+    os.system('cls')
+
+    tentativas.clear()
+
+    # Conta a quantidade de rodadas
+    rodadas += 1
+
+    # Testa se algum jogador ganhou a quantia de rodadas escolhidas anteriormente
+    if pontuacao_jogador1 == partida:
+        print(f'{jogador1} ganhou!')
+
+    elif pontuacao_jogador2 == partida:
+        print(f'{jogador2} ganhou!')
+
+    else:
+        continue
+
+    # Pergunta se o jogador quer jogar novamente com outras configurações
+    # Troca a quantidade de partidas
+    # Zera o placar
+    while True:
+        
+        jogar_novamente = input('Gostaria de jogar novemante[s|n]')
+
+        if jogar_novamente == 's':
+            tentativas = []
+
+            pontuacao_jogador1 = 0
+
+            pontuacao_jogador2 = 0
+
+            rodadas = 1 
+
+            velha = 0
+
+            os.system('cls')
+            partida = int(input('Quantas partidas para ter um vencedor: '))
+            time.sleep(0.5)
+
+            print(f'Está jogando uma melhor de {partida}') 
+            time.sleep(2)
+            break
+
+        elif jogar_novamente == 'n':
+            os.system('cls')
+            print('Muito obrigado!')
+            time.sleep(1)
+            quit()
+
+        else:
+            print('Digite a letra correta\n')
