@@ -1,27 +1,19 @@
-# Chama as funções do Sistema
+# Chama as funcoes do Sistema
 import os
 
-# Chama as funções de Tempo
+# Chama as funcoes de Tempo
 import time
 
 # Chama as funcoes aleatórias
 import random
 
-# Chama as posicôes para a variavel tabuleiro
+# Chama as posicoes para a variavel tabuleiro
 def tabuleiro():
     num = 1
 
     for i in range(3):
         for j in range(3):
-            if num in tentativas and j < 2:
-                print(' ', end=' | ')
-            
-            elif j < 2:
-                print(num, end=' | ')
-
-            else:
-                print(num, end='   ')
-
+            print(num if not num in tentativas else ' ', end=' | ' if j < 2 else '  ')
             num += 1
         
         if i < 2:
@@ -111,7 +103,7 @@ while True:
         sozinho = input('Voce deseja jogar sozinho? [s|n]: ')
 
         if sozinho == 's':
-            print('Esta jogando sozinho')
+            print('Esta jogando sozinho!')
             jogador2 = 'PC'
 
         else:
@@ -138,8 +130,17 @@ velha = 0
 
 os.system('cls')
 
-partida = int(input('Quantas partidas para ter um vencedor: '))
-time.sleep(0.5)
+while True:
+    partida = input('Quantas partidas para ter um vencedor: ')
+
+    if partida.isdigit():
+        partida = int(partida)
+
+        if (partida % 2 == 0 or partida % 2 == 1) and partida > 0:
+            break
+
+        print('Digite somente numeros inteiros acima de 0')
+
 
 print(f'Está jogando uma melhor de {partida}') 
 
@@ -277,6 +278,7 @@ while True:
         jogar_novamente = input('Gostaria de jogar novemante[s|n]')
 
         if jogar_novamente == 's':
+
             tentativas = []
 
             pontuacao_jogador1 = 0
@@ -288,13 +290,7 @@ while True:
             velha = 0
 
             os.system('cls')
-            partida = int(input('Quantas partidas para ter um vencedor: '))
-            time.sleep(0.5)
-
-            print(f'Está jogando uma melhor de {partida}') 
-            time.sleep(2)
-            break
-
+            
         elif jogar_novamente == 'n':
             os.system('cls')
             print('Muito obrigado!')
@@ -303,3 +299,19 @@ while True:
 
         else:
             print('Digite a letra correta\n')
+            continue
+
+        while True:
+            partida = input('Quantas partidas para ter um vencedor: ')
+
+            if partida.isdigit():
+                partida = int(partida)
+
+            if (partida % 2 == 0 or partida % 2 == 1) and partida > 0:
+                break
+
+            print('Digite somente numeros inteiros acima de 0')
+
+        print(f'Está jogando uma melhor de {partida}') 
+        time.sleep(2)
+        break
